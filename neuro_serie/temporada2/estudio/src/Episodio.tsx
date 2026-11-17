@@ -26,7 +26,8 @@ const transicoes: (() => TransitionPresentation<any>)[] = [
 export const EP1: Ep = {dados: d1, rivalNome: 'ROBÔ', rivalCor: '#3ff3ff', Rival: Calculino, rodadas: 4};
 
 /** Monta qualquer episodio: cenas padrao + cenas especiais do episodio (extra) */
-export const MontaEpisodio: React.FC<{ep: Ep; audio: string; extra?: Record<string, React.FC<{cena: Cena}>>}> = ({ep, audio, extra = {}}) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const MontaEpisodio: React.FC<{ep: Ep; audio: string; extra?: Record<string, React.FC<{cena: Cena}>>; trans?: (() => TransitionPresentation<any>)[]}> = ({ep, audio, extra = {}, trans = transicoes}) => {
   const dados = ep.dados;
   const T = dados.transicao;
   const cenas = dados.cenas as Cena[];
@@ -58,7 +59,7 @@ export const MontaEpisodio: React.FC<{ep: Ep; audio: string; extra?: Record<stri
     );
     if (i < cenas.length - 1) {
       itens.push(
-        <TransitionSeries.Transition key={`t${i}`} presentation={transicoes[i % transicoes.length]()} timing={linearTiming({durationInFrames: T})} />,
+        <TransitionSeries.Transition key={`t${i}`} presentation={trans[i % trans.length]()} timing={linearTiming({durationInFrames: T})} />,
       );
     }
   });
@@ -95,3 +96,14 @@ export const EP2: Ep = {dados: d2, rivalNome: 'MIRAGEM', rivalCor: '#ff4fd8', Ri
 export const EP3: Ep = {dados: d3, rivalNome: 'TURBO', rivalCor: '#ffd000', Rival: Turbo, rodadas: 6, visuais: VISUAIS};
 export const Episodio2: React.FC = () => <MontaEpisodio ep={EP2} audio="s2e2/mix.wav" extra={EXTRA} />;
 export const Episodio3: React.FC = () => <MontaEpisodio ep={EP3} audio="s2e3/mix.wav" extra={EXTRA} />;
+
+// ------------------------------------------------------------------ Episodios 4 e 5 (regras do HyperFrames)
+import d4 from './data/s2e4.json';
+import d5 from './data/s2e5.json';
+import {Doutor, EXTRA45, TRANS45} from './ep45';
+import {VISUAIS as VIS23} from './ep23';
+
+export const EP4: Ep = {dados: d4, rivalNome: 'DOUTOR', rivalCor: '#c45cff', Rival: Doutor, rodadas: 4, visuais: VIS23};
+export const EP5: Ep = {dados: d5, rivalNome: 'DOUTOR', rivalCor: '#c45cff', Rival: Doutor, rodadas: 4, visuais: VIS23};
+export const Episodio4: React.FC = () => <MontaEpisodio ep={EP4} audio="s2e4/mix.wav" extra={EXTRA45} trans={TRANS45} />;
+export const Episodio5: React.FC = () => <MontaEpisodio ep={EP5} audio="s2e5/mix.wav" extra={EXTRA45} trans={TRANS45} />;

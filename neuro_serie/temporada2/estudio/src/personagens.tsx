@@ -1,7 +1,8 @@
 import React, {useId} from 'react';
 import {useCurrentFrame} from 'remotion';
 
-export type Humor = 'feliz' | 'rindo' | 'surpreso' | 'bravo' | 'triste';
+export type Humor = 'feliz' | 'rindo' | 'surpreso' | 'bravo' | 'triste' | 'tonto';
+import {random} from 'remotion';
 
 // Lobos do cerebro (x, y, raio) em unidades de 100px
 const LOBOS: [number, number, number][] = [
@@ -39,7 +40,7 @@ export const Neuro: React.FC<{
         </radialGradient>
       </defs>
       <ellipse cx={0} cy={190} rx={150} ry={22} fill="rgba(0,0,0,0.28)" />
-      <g transform={`translate(0 ${pulo})`}>
+      <g transform={`translate(${(random(`bx${Math.floor(f / 2.5)}`) - 0.5) * 2.4} ${pulo + (random(`by${Math.floor(f / 2.5)}`) - 0.5) * 2.4}) rotate(${humor === 'tonto' ? Math.sin(f / 6) * 6 : 0})`}>
         {bracos &&
           [-1, 1].map((lado) => {
             const a = angBraco(lado);
@@ -65,6 +66,14 @@ export const Neuro: React.FC<{
         ))}
         {/* olhos */}
         {[-42, 42].map((ex) => {
+          if (humor === 'tonto') {
+            return (
+              <g key={ex}>
+                <ellipse cx={ex} cy={5} rx={28} ry={30} fill="#fff" stroke="#3c1428" strokeWidth={5} />
+                <path d={`M ${ex} 5 m -15 0 a 15 15 0 1 1 15 15 a 9 9 0 1 1 -9 -9`} fill="none" stroke="#7a3df0" strokeWidth={5} transform={`rotate(${f * 18 * Math.sign(ex)} ${ex} 5)`} />
+              </g>
+            );
+          }
           if (humor === 'rindo') {
             return <path key={ex} d={`M ${ex - 22} 10 Q ${ex} -16 ${ex + 22} 10`} stroke="#3c1428" strokeWidth={9} fill="none" strokeLinecap="round" />;
           }

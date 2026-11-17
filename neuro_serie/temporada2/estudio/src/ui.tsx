@@ -240,7 +240,7 @@ const PaginaLegenda: React.FC<{page: TikTokPage; y: number; cor: string}> = ({pa
         textAlign: 'center',
         fontFamily: CORPO,
         fontWeight: 900,
-        fontSize: 74,
+        fontSize: y < 1300 ? 60 : 74,
         lineHeight: 1.1,
         color: '#fff',
         WebkitTextStroke: '12px #140a24',
@@ -272,7 +272,9 @@ export const Opcoes: React.FC<{
   robo: number;
   roboEm: number;
   revelaEm: number;
-}> = ({itens, inicio, certa, robo, roboEm, revelaEm}) => {
+  yBase?: number;
+  passo?: number;
+}> = ({itens, inicio, certa, robo, roboEm, revelaEm, yBase = 1080, passo = 128}) => {
   const f = useCurrentFrame();
   const {fps} = useVideoConfig();
   const t = f / fps;
@@ -282,7 +284,7 @@ export const Opcoes: React.FC<{
     <>
       {itens.map((txt, i) => {
         const e = spring({frame: f - Math.round((inicio + i * 0.12) * fps), fps, config: {damping: 13, stiffness: 160}});
-        const y = 1080 + i * 128;
+        const y = yBase + i * passo;
         const ehCerta = i === certa;
         const tremer = revelado && !ehCerta && i === robo ? Math.sin(kRev * 1.5) * Math.max(0, 12 - kRev) : 0;
         const bg = revelado ? (ehCerta ? 'linear-gradient(90deg,#1fb85c,#36d97a)' : 'rgba(60,20,40,0.85)') : 'linear-gradient(90deg,rgba(35,25,80,0.92),rgba(60,35,120,0.92))';
@@ -377,7 +379,7 @@ const EtiquetaRobo: React.FC<{errou: boolean; desde: number}> = ({errou, desde})
 };
 
 /** Contagem regressiva em anel */
-export const Contagem: React.FC<{ini: number; fim: number; y?: number}> = ({ini, fim, y = 990}) => {
+export const Contagem: React.FC<{ini: number; fim: number; y?: number; x?: number}> = ({ini, fim, y = 990, x = 540}) => {
   const f = useCurrentFrame();
   const {fps} = useVideoConfig();
   const t = f / fps;
@@ -388,7 +390,7 @@ export const Contagem: React.FC<{ini: number; fim: number; y?: number}> = ({ini,
   const pulso = spring({frame: (f - Math.round(ini * fps)) % fps, fps, config: {damping: 9, stiffness: 200}});
   const c = 2 * Math.PI * 52;
   return (
-    <div style={{position: 'absolute', left: 540, top: y, transform: `translate(-50%,-50%) scale(${0.9 + 0.1 * pulso})`}}>
+    <div style={{position: 'absolute', left: x, top: y, transform: `translate(-50%,-50%) scale(${0.9 + 0.1 * pulso})`}}>
       <svg width={150} height={150} viewBox="-75 -75 150 150">
         <circle r={60} fill="rgba(10,6,30,0.85)" stroke="#fff" strokeWidth={5} />
         <circle r={52} fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth={10} />

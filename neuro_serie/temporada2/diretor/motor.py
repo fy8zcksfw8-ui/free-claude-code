@@ -104,7 +104,7 @@ def montar(nome, CENAS, VOZ, contagem=2.5, transicao=14, bpm=118, tom=0, gap=0.1
     for st, q, a in clips:
         put(voz, st * SR, a); porq.setdefault(q, np.zeros(N, np.float32)); put(porq[q], st * SR, a)
     hop = SR // FPS; timeline["boca"] = {}
-    for q in (NEURO, RIVAL):
+    for q in sorted(set([NEURO, RIVAL]) | set(porq)):
         arr = porq.get(q, np.zeros(N, np.float32))
         v = np.array([np.sqrt(np.mean(arr[i * hop:(i + 1) * hop] ** 2)) for i in range(TOTAL)])
         v = np.convolve(np.clip(v * 7.5, 0, 1), [0.25, 0.5, 0.25], "same")
