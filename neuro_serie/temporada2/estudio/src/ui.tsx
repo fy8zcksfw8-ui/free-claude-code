@@ -2,7 +2,7 @@ import React, {useMemo} from 'react';
 import {AbsoluteFill, interpolate, random, Sequence, spring, useCurrentFrame, useVideoConfig} from 'remotion';
 import {createTikTokStyleCaptions} from '@remotion/captions';
 import type {Caption, TikTokPage} from '@remotion/captions';
-import {Calculino} from './personagens';
+import {useEp} from './ctx';
 
 export const TITULO = 'Lilita One';
 export const CORPO = 'Nunito';
@@ -139,6 +139,7 @@ export const Coracao: React.FC<{tamanho: number; cor?: string}> = ({tamanho, cor
 /** HUD: vidas (esquerda), placar (centro) e rodadas (direita) dentro da zona segura */
 export const Hud: React.FC<{placar: [number, number]; rodada: number; pulsoPlacar?: number}> = ({placar, rodada, pulsoPlacar = 0}) => {
   const f = useCurrentFrame();
+  const ep = useEp();
   return (
     <>
       <div style={{position: 'absolute', left: 50, top: 222, display: 'flex', gap: 4}}>
@@ -169,11 +170,11 @@ export const Hud: React.FC<{placar: [number, number]; rodada: number; pulsoPlaca
         <span style={{color: '#ff8db6'}}>TIME</span>
         <span style={{color: '#ffd23f', fontSize: 58}}>{placar[0]}</span>
         <span style={{opacity: 0.7}}>×</span>
-        <span style={{color: '#3ff3ff', fontSize: 58}}>{placar[1]}</span>
-        <span style={{color: '#3ff3ff'}}>ROBÔ</span>
+        <span style={{color: ep.rivalCor, fontSize: 58}}>{placar[1]}</span>
+        <span style={{color: ep.rivalCor}}>{ep.rivalNome}</span>
       </div>
       <div style={{position: 'absolute', left: 540, top: 318, transform: 'translate(-50%,-50%)', display: 'flex', gap: 10}}>
-        {[1, 2, 3, 4].map((i) => (
+        {Array.from({length: ep.rodadas}, (_, k) => k + 1).map((i) => (
           <div
             key={i}
             style={{
@@ -195,6 +196,7 @@ const CORES_FALA: Record<string, string> = {neuro: '#ffd23f', robo: '#3ff3ff'};
 /** Legendas estilo TikTok (skill display-captions), uma fala por vez, na zona segura */
 export const Legendas: React.FC<{clipes: Clipe[]; y?: number}> = ({clipes, y = 1430}) => {
   const {fps} = useVideoConfig();
+  const ep = useEp();
   return (
     <AbsoluteFill>
       {clipes.map((c, ci) => {
@@ -214,7 +216,7 @@ export const Legendas: React.FC<{clipes: Clipe[]; y?: number}> = ({clipes, y = 1
           if (fim - ini <= 0) return null;
           return (
             <Sequence key={`${ci}-${pi}`} from={Math.round(ini)} durationInFrames={Math.max(1, Math.round(fim - ini))} layout="none">
-              <PaginaLegenda page={p} y={y} cor={CORES_FALA[c.quem] ?? '#ffd23f'} />
+              <PaginaLegenda page={p} y={y} cor={c.quem === 'robo' ? ep.rivalCor : CORES_FALA[c.quem] ?? '#ffd23f'} />
             </Sequence>
           );
         });
@@ -345,6 +347,8 @@ const Visto: React.FC<{k: number}> = ({k}) => {
 
 const EtiquetaRobo: React.FC<{errou: boolean; desde: number}> = ({errou, desde}) => {
   const {fps} = useVideoConfig();
+  const ep = useEp();
+  const Rival = ep.Rival;
   const e = spring({frame: desde, fps, config: {damping: 10}});
   return (
     <div
@@ -356,8 +360,8 @@ const EtiquetaRobo: React.FC<{errou: boolean; desde: number}> = ({errou, desde})
         display: 'flex',
         alignItems: 'center',
         gap: 6,
-        background: errou ? '#ff3b4f' : '#0e2a3a',
-        border: '4px solid #3ff3ff',
+        background: errou ? '#ff3b4f' : '#0e1a2a',
+        border: `4px solid ${ep.rivalCor}`,
         borderRadius: 999,
         padding: '2px 16px 2px 6px',
         fontSize: 28,
@@ -365,9 +369,9 @@ const EtiquetaRobo: React.FC<{errou: boolean; desde: number}> = ({errou, desde})
       }}
     >
       <div style={{width: 46, height: 46, overflow: 'visible', marginTop: -4}}>
-        <Calculino tamanho={46} modo={errou ? 'erro' : 'normal'} />
+        <Rival tamanho={46} modo={errou ? 'erro' : 'normal'} />
       </div>
-      {errou ? 'ROBÔ ERROU!' : 'ROBÔ'}
+      {errou ? `${ep.rivalNome} ERROU!` : ep.rivalNome}
     </div>
   );
 };

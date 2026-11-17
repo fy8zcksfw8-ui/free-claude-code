@@ -4,23 +4,22 @@ import {Calculino, Neuro, Trofeu} from './personagens';
 import type {Humor, ModoRobo} from './personagens';
 import {Contagem, Coracao, Engrenagem, Fundo, Hud, Legendas, Opcoes, Pilula, Texto, TITULO, useMola} from './ui';
 import type {Clipe} from './ui';
-import dados from './data/s2e1.json';
+import {useEp} from './ctx';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Cena = any;
-const BOCA = dados.boca as Record<string, number[]>;
 
-const useBoca = (quem: string, inicio: number) => {
+export const useBoca = (quem: string, inicio: number) => {
   const f = useCurrentFrame();
-  const arr = BOCA[quem] ?? [];
+  const arr = (useEp().dados.boca as Record<string, number[]>)[quem] ?? [];
   return arr[inicio + f] ?? 0;
 };
-const useT = () => {
+export const useT = () => {
   const f = useCurrentFrame();
   const {fps} = useVideoConfig();
   return f / fps;
 };
-const Abs: React.FC<{x: number; y: number; children: React.ReactNode; escala?: number; rot?: number}> = ({x, y, children, escala = 1, rot = 0}) => (
+export const Abs: React.FC<{x: number; y: number; children: React.ReactNode; escala?: number; rot?: number}> = ({x, y, children, escala = 1, rot = 0}) => (
   <div style={{position: 'absolute', left: x, top: y, transform: `translate(-50%,-50%) scale(${escala}) rotate(${rot}deg)`}}>{children}</div>
 );
 
@@ -441,7 +440,10 @@ export const CenaRodada: React.FC<{cena: Cena; placarAntes: [number, number]; pl
   const ev = cena.eventos;
   const bN = useBoca('neuro', cena.inicio);
   const bR = useBoca('robo', cena.inicio);
-  const tema = TEMAS[cena.n];
+  const ep = useEp();
+  const Rival = ep.Rival;
+  const tema = TEMAS[((cena.n - 1) % 4) + 1];
+  const Extra = ep.visuais?.[cena.visual];
   const tit = useMola(0.35, {damping: 11});
   const revelado = t >= ev.revelaEm;
   const roboErrou = cena.robo !== cena.certa;
@@ -462,7 +464,7 @@ export const CenaRodada: React.FC<{cena: Cena; placarAntes: [number, number]; pl
       <Texto y={392} tamanho={cena.final ? 92 : 70} cor={cena.final ? '#ff4d5e' : '#fff'} escala={tit}>
         {cena.titulo}
       </Texto>
-      {!cena.final &&
+      {(!cena.final || cena.visual === 'pergunta') &&
         (cena.texto as string[]).map((l, i) => (
           <Texto key={i} y={474 + i * 62} tamanho={54} cor="#ffd23f" escala={spring({frame: f - 12 - i * 6, fps: 30, config: {damping: 12}})} contorno={10}>
             {l}
@@ -472,16 +474,17 @@ export const CenaRodada: React.FC<{cena: Cena; placarAntes: [number, number]; pl
       {cena.visual === 'corrida' && <VisualCorrida revela={ev.revelaEm} />}
       {cena.visual === 'engrenagens' && <VisualEngrenagens revela={ev.revelaEm} />}
       {cena.visual === 'conta' && <VisualConta revela={ev.revelaEm} texto={cena.texto[0]} />}
+      {Extra && <Extra cena={cena} />}
       <Abs x={120} y={960} escala={0.95}>
         <Neuro tamanho={230} boca={bN} humor={humorN} bracos={false} />
       </Abs>
       <Abs x={900} y={960} escala={0.95}>
-        <Calculino tamanho={230} boca={bR} modo={modoR} />
+        <Rival tamanho={230} boca={bR} modo={modoR} />
       </Abs>
       {t >= ev.roboEm && t < ev.revelaEm && (
         <Abs x={760} y={862} escala={balao}>
-          <div style={{background: '#0e2a3a', border: '5px solid #3ff3ff', borderRadius: 26, padding: '6px 22px', fontFamily: TITULO, fontSize: 46, color: '#3ff3ff', whiteSpace: 'nowrap'}}>
-            É {cena.opcoes[cena.robo].toUpperCase()}!
+          <div style={{background: '#0e1a2a', border: `5px solid ${ep.rivalCor}`, borderRadius: 26, padding: '6px 22px', fontFamily: TITULO, fontSize: 46, color: ep.rivalCor, whiteSpace: 'nowrap'}}>
+            {cena.balao ?? `É ${cena.opcoes[cena.robo].toUpperCase()}!`}
           </div>
         </Abs>
       )}
@@ -489,7 +492,7 @@ export const CenaRodada: React.FC<{cena: Cena; placarAntes: [number, number]; pl
       <Contagem ini={ev.contaIni} fim={ev.contaFim} y={985} />
       {voar && (
         <Abs x={interpolate(kPonto, [0, 20], [540, cena.ponto === 'neuro' ? 470 : 610])} y={interpolate(kPonto, [0, 20], [700, 250])} escala={1.2 - kPonto / 30}>
-          <div style={{fontFamily: TITULO, fontSize: 90, color: cena.ponto === 'neuro' ? '#ffd23f' : '#3ff3ff', WebkitTextStroke: '10px #140a24', paintOrder: 'stroke fill'}}>+1</div>
+          <div style={{fontFamily: TITULO, fontSize: 90, color: cena.ponto === 'neuro' ? '#ffd23f' : ep.rivalCor, WebkitTextStroke: '10px #140a24', paintOrder: 'stroke fill'}}>+1</div>
         </Abs>
       )}
       {bug && (
@@ -503,7 +506,7 @@ export const CenaRodada: React.FC<{cena: Cena; placarAntes: [number, number]; pl
       )}
       {bug && (
         <Texto y={555} tamanho={84} cor="#ff4d5e" escala={1 + 0.05 * Math.sin(f)} rot={-4}>
-          ERRO! ERRO!
+          {cena.bugTexto ?? 'ERRO! ERRO!'}
         </Texto>
       )}
       <Legendas clipes={cena.clipes as Clipe[]} y={1440} />
