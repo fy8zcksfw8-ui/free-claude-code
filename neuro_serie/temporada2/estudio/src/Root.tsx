@@ -1,21 +1,21 @@
 import React from 'react';
-import {AbsoluteFill, Composition, interpolate, spring, useCurrentFrame, useVideoConfig} from 'remotion';
+import {Composition, continueRender, delayRender} from 'remotion';
 import '@fontsource/lilita-one';
+import '@fontsource/nunito/800.css';
+import '@fontsource/nunito/900.css';
+import {ComZonas, Episodio} from './Episodio';
+import dados from './data/s2e1.json';
 
-const Teste: React.FC = () => {
-  const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
-  const s = spring({frame, fps, config: {damping: 8}});
-  const o = interpolate(frame, [0, 10], [0, 1], {extrapolateRight: 'clamp'});
-  return (
-    <AbsoluteFill style={{background: 'linear-gradient(#5b2bd6,#120a2e)', justifyContent: 'center', alignItems: 'center'}}>
-      <div style={{fontFamily: 'Lilita One', fontSize: 160, color: '#ffd23f', transform: `scale(${s})`, opacity: o, textAlign: 'center'}}>
-        TEMPORADA 2 ção
-      </div>
-    </AbsoluteFill>
-  );
-};
+if (typeof document !== 'undefined') {
+  const h = delayRender('carregando fontes');
+  Promise.all([document.fonts.load('80px "Lilita One"'), document.fonts.load('900 80px Nunito'), document.fonts.load('800 80px Nunito')])
+    .then(() => continueRender(h))
+    .catch(() => continueRender(h));
+}
 
 export const RemotionRoot: React.FC = () => (
-  <Composition id="Teste" component={Teste} durationInFrames={30} fps={30} width={1080} height={1920} />
+  <>
+    <Composition id="S2E1" component={Episodio} durationInFrames={dados.total} fps={30} width={1080} height={1920} />
+    <Composition id="S2E1-zonas" component={ComZonas} durationInFrames={dados.total} fps={30} width={1080} height={1920} />
+  </>
 );
