@@ -16,7 +16,7 @@ Você passaria pela Esfinge? 🗿🔺
 #enigma #desafio #quiz #charada #neuro
 
 ## Dicas de postagem (skill short-video-distribution)
-- Capa: o quadro de 0,1 s (olhos da Esfinge + "RESPONDA… OU VIRE PEDRA").
+- Capa: o quadro de 0,5 s (olhos da Esfinge + "RESPONDA… OU VIRE PEDRA").
 - Fixe um comentário seu: "Qual foi o mais difícil: 1, 2 ou 3?"
 - Privacidade: escolha você (dá para testar como privado primeiro).
 - Vozes sintéticas (IA) em animação; se a plataforma perguntar, marque por transparência.
