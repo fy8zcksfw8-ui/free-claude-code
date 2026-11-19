@@ -97,17 +97,22 @@ export const Doutor: React.FC<RivalProps> = ({tamanho, boca = 0, modo = 'normal'
 const TituloV2: React.FC<{y: number; texto: string; tamanho: number; cor?: string; ini?: number}> = ({y, texto, tamanho, cor = '#fff', ini = 0.15}) => {
   const f = useCurrentFrame();
   const palavras = texto.split(' ');
+  let n = 0;
   return (
-    <div style={{position: 'absolute', left: 60, width: 960, top: y - tamanho * 0.6, display: 'flex', flexWrap: 'wrap', justifyContent: 'center', columnGap: tamanho * 0.28, fontFamily: TITULO, fontSize: tamanho, lineHeight: 1.05, color: cor, WebkitTextStroke: `${Math.round(tamanho / 7)}px #140a24`, paintOrder: 'stroke fill'}}>
-      {palavras.map((p, i) => {
-        const k = f - Math.round((ini + i * 0.067) * 30);
-        const q = interpolate(k, [0, 4], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
-        return (
-          <span key={i} style={{opacity: q, filter: `blur(${(1 - q) * 6}px)`, display: 'inline-block'}}>
-            {p}
-          </span>
-        );
-      })}
+    <div style={{position: 'absolute', left: 60, width: 960, top: y - tamanho * 0.6, display: 'flex', flexWrap: 'wrap', justifyContent: 'center', columnGap: tamanho * 0.28, fontFamily: TITULO, fontSize: tamanho, lineHeight: 1.05, color: cor, WebkitTextStroke: `${Math.round(tamanho / 7)}px #140a24`, paintOrder: 'stroke fill', textShadow: `0 0 ${tamanho * 0.35}px ${cor}55`}}>
+      {palavras.map((p, i) => (
+        <span key={i} style={{display: 'inline-block', overflow: 'hidden', padding: `${tamanho * 0.12}px ${tamanho * 0.06}px`, margin: `-${tamanho * 0.12}px -${tamanho * 0.06}px`}}>
+          {Array.from(p).map((ch, j) => {
+            const k = f - Math.round((ini + (n++) * 0.022) * 30);
+            const s = spring({frame: k, fps: 30, config: {damping: 11, stiffness: 170}});
+            return (
+              <span key={j} style={{display: 'inline-block', transform: `translateY(${(1 - s) * 115}%) rotate(${(1 - s) * 8}deg)`}}>
+                {ch}
+              </span>
+            );
+          })}
+        </span>
+      ))}
     </div>
   );
 };
@@ -175,7 +180,9 @@ export const RodadaV2: React.FC<{cena: Cena}> = ({cena}) => {
   const nOp = (cena.opcoes as string[]).length;
   return (
     <AbsoluteFill style={{transform: `translate(${jitter}px, ${jitter * 0.5}px) scale(${1 + 0.07 * interpolate(f - Math.round(ev.revelaEm * 30), [0, 3, 16], [0, 1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'})})`}}>
-      {ep.FundoRodada ? <ep.FundoRodada n={cena.n} /> : <Fundo c1={tema[0]} c2={tema[1]} c3={tema[2]} />}
+      <AbsoluteFill style={{filter: `blur(${interpolate(t, [ev.contaIni, ev.contaIni + 0.4, ev.revelaEm, ev.revelaEm + 0.35], [0, 5, 5, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'})}px)`, transform: `scale(${1.02 + 0.03 * Math.sin(f / 70)}) rotate(${Math.sin(f / 90) * 0.8}deg)`}}>
+        {ep.FundoRodada ? <ep.FundoRodada n={cena.n} /> : <Fundo c1={tema[0]} c2={tema[1]} c3={tema[2]} />}
+      </AbsoluteFill>
       {memoria ? (
         <>
           <Hud placar={pontuou ? depois : antes} rodada={cena.n} pulsoPlacar={0} />
@@ -225,6 +232,12 @@ export const RodadaV2: React.FC<{cena: Cena}> = ({cena}) => {
       )}
       {bug && <AbsoluteFill style={{background: 'repeating-linear-gradient(0deg, rgba(196,92,255,0.16) 0 3px, transparent 3px 7px)', opacity: 0.6 + 0.4 * Math.sin(f)}} />}
       {bug && <TituloV2 y={600} texto={cena.bugTexto ?? 'ERRO!'} tamanho={92} cor="#ff4d6d" ini={ev.bugEm} />}
+      {t >= ev.contaFim - 1 && t < ev.contaFim && (
+        <AbsoluteFill style={{pointerEvents: 'none', background: 'radial-gradient(circle at 50% 50%, transparent 45%, rgba(255,20,60,0.55) 100%)', opacity: Math.pow(Math.abs(Math.sin(((t - (ev.contaFim - 1)) * Math.PI * 2))), 3)}} />
+      )}
+      {f - Math.round(ev.revelaEm * 30) >= 0 && f - Math.round(ev.revelaEm * 30) < 5 && (
+        <AbsoluteFill style={{pointerEvents: 'none', mixBlendMode: 'screen', background: 'repeating-linear-gradient(90deg, rgba(255,0,90,0.22) 0 3px, rgba(0,255,255,0.18) 3px 6px, transparent 6px 12px)'}} />
+      )}
       <Legendas clipes={cena.clipes} y={LEG_Y} />
     </AbsoluteFill>
   );

@@ -211,7 +211,7 @@ export const Legendas: React.FC<{clipes: Clipe[]; y?: number}> = ({clipes, y = 1
           timestampMs: null,
           confidence: null,
         }));
-        const {pages} = createTikTokStyleCaptions({captions: caps, combineTokensWithinMilliseconds: 700});
+        const {pages} = createTikTokStyleCaptions({captions: caps, combineTokensWithinMilliseconds: y < 1300 ? 420 : 700});
         return pages.map((p, pi) => {
           const prox = pages[pi + 1];
           const ini = (p.startMs / 1000) * fps;
@@ -293,6 +293,9 @@ export const Opcoes: React.FC<{
         const tremer = revelado && !ehCerta && i === robo ? Math.sin(kRev * 1.5) * Math.max(0, 12 - kRev) : 0;
         const bg = revelado ? (ehCerta ? 'linear-gradient(90deg,#1fb85c,#36d97a)' : 'rgba(60,20,40,0.85)') : 'linear-gradient(135deg,rgba(120,80,230,0.92) 0%,rgba(45,25,110,0.92) 55%,rgba(25,12,60,0.92) 100%)';
         const brilho = revelado && ehCerta ? 10 + 6 * Math.sin(kRev / 3) : 0;
+        const kCai = kRev - 26 - i * 3; // as erradas caem depois de a etiqueta aparecer
+        const cai = revelado && !ehCerta && kCai > 0;
+        const lado = i % 2 ? 1 : -1;
         return (
           <div
             key={i}
@@ -302,8 +305,9 @@ export const Opcoes: React.FC<{
               top: y,
               width: 820,
               height: 104,
-              transform: `translateX(${(1 - e) * -700}px) scale(${revelado && ehCerta ? 1 + 0.04 * spring({frame: kRev, fps, config: {damping: 8}}) : 1})`,
-              opacity: revelado && !ehCerta ? 0.55 : 1,
+              transformOrigin: '50% 0%',
+              transform: `perspective(1200px) rotateX(${(1 - e) * 88}deg) translateY(${cai ? kCai * kCai * 1.4 : 0}px) rotate(${cai ? lado * kCai * 1.6 : 0}deg) scale(${revelado && ehCerta ? 1 + 0.05 * spring({frame: kRev, fps, config: {damping: 8}}) : 1})`,
+              opacity: revelado && !ehCerta ? (cai ? Math.max(0, 0.55 - kCai / 22) : 0.55) : Math.min(1, e * 1.5),
               background: bg,
               borderRadius: 30,
               border: `5px solid ${revelado && ehCerta ? '#b9ffd2' : 'rgba(255,255,255,0.85)'}`,
@@ -333,6 +337,11 @@ export const Opcoes: React.FC<{
               {'ABC'[i]}
             </div>
             <span>{txt}</span>
+            {revelado && ehCerta && kRev < 30 && (
+              <div style={{position: 'absolute', inset: 0, borderRadius: 26, overflow: 'hidden', pointerEvents: 'none'}}>
+                <div style={{position: 'absolute', top: -20, bottom: -20, width: 140, left: interpolate(kRev, [2, 22], [-200, 980], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}), transform: 'skewX(-20deg)', background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.75), transparent)'}} />
+              </div>
+            )}
             {revelado && ehCerta && <Visto k={kRev} />}
             {t >= roboEm && i === robo && <EtiquetaRobo errou={revelado && !ehCerta} desde={f - roboEm * fps} />}
           </div>

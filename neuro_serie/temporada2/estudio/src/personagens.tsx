@@ -25,7 +25,10 @@ export const Neuro: React.FC<{
   const acessorio = useContext(AcessorioNeuro);
   const id = useId().replace(/:/g, '');
   const piscar = f % 96 < 4 && humor !== 'rindo';
-  const olhar = Math.sin(f / 25) * 6;
+  // olhar com 'sacadas': muda de alvo a cada ~1,3 s, chegando rapido e parando (como olhos de verdade)
+  const alvo = (i: number) => (random(`olho${i}`) - 0.5) * 14;
+  const ciclo = Math.floor(f / 40);
+  const olhar = alvo(ciclo - 1) + (alvo(ciclo) - alvo(ciclo - 1)) * Math.min(1, (f % 40) / 4);
   const pulo = humor === 'rindo' ? Math.abs(Math.sin(f / 4)) * -10 : Math.sin(f / 8) * 4;
   const u = 100;
   const angBraco = (lado: number) =>
@@ -44,7 +47,7 @@ export const Neuro: React.FC<{
         </radialGradient>
       </defs>
       <ellipse cx={0} cy={190} rx={150} ry={22} fill="rgba(0,0,0,0.28)" />
-      <g transform={`translate(${(random(`bx${Math.floor(f / 2.5)}`) - 0.5) * 2.4} ${pulo + (random(`by${Math.floor(f / 2.5)}`) - 0.5) * 2.4}) rotate(${humor === 'tonto' ? Math.sin(f / 6) * 6 : 0})`}>
+      <g transform={`translate(${(random(`bx${Math.floor(f / 2.5)}`) - 0.5) * 2.4} ${pulo + (random(`by${Math.floor(f / 2.5)}`) - 0.5) * 2.4}) rotate(${humor === 'tonto' ? Math.sin(f / 6) * 6 : humor === 'surpreso' ? -5 : Math.sin(f / 30) * 1.5}) scale(${1 + 0.012 * Math.sin(f / 11)} ${1 + 0.02 * Math.sin(f / 11 + 1.2)})`}>
         {bracos &&
           [-1, 1].map((lado) => {
             const a = angBraco(lado);
