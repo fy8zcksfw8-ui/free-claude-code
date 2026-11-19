@@ -259,7 +259,7 @@ const PaginaLegenda: React.FC<{page: TikTokPage; y: number; cor: string}> = ({pa
       {page.tokens.map((t) => {
         const ativo = t.fromMs <= agora && t.toMs + 120 > agora;
         return (
-          <span key={t.fromMs} style={{color: ativo ? cor : '#fff', display: 'inline-block', transform: `scale(${ativo ? 1.06 : 1})`}}>
+          <span key={t.fromMs} style={{color: '#fff', display: 'inline-block', transform: `scale(${ativo ? 1.08 : 1}) rotate(${ativo ? -3 : 0}deg)`, background: ativo ? cor : 'transparent', borderRadius: 16, padding: '0 12px', boxShadow: ativo ? `0 0 26px ${cor}, 0 6px 0 rgba(0,0,0,0.3)` : 'none'}}>
             {t.text.trim()}
           </span>
         );
@@ -291,7 +291,7 @@ export const Opcoes: React.FC<{
         const y = yBase + i * passo;
         const ehCerta = i === certa;
         const tremer = revelado && !ehCerta && i === robo ? Math.sin(kRev * 1.5) * Math.max(0, 12 - kRev) : 0;
-        const bg = revelado ? (ehCerta ? 'linear-gradient(90deg,#1fb85c,#36d97a)' : 'rgba(60,20,40,0.85)') : 'linear-gradient(90deg,rgba(35,25,80,0.92),rgba(60,35,120,0.92))';
+        const bg = revelado ? (ehCerta ? 'linear-gradient(90deg,#1fb85c,#36d97a)' : 'rgba(60,20,40,0.85)') : 'linear-gradient(135deg,rgba(120,80,230,0.92) 0%,rgba(45,25,110,0.92) 55%,rgba(25,12,60,0.92) 100%)';
         const brilho = revelado && ehCerta ? 10 + 6 * Math.sin(kRev / 3) : 0;
         return (
           <div
@@ -307,7 +307,7 @@ export const Opcoes: React.FC<{
               background: bg,
               borderRadius: 30,
               border: `5px solid ${revelado && ehCerta ? '#b9ffd2' : 'rgba(255,255,255,0.85)'}`,
-              boxShadow: `0 8px 0 rgba(0,0,0,0.3), 0 0 ${brilho * 4}px rgba(80,255,150,${brilho ? 0.7 : 0})`,
+              boxShadow: `inset 0 3px 0 rgba(255,255,255,0.35), inset 0 -6px 12px rgba(0,0,0,0.25), 0 8px 0 rgba(0,0,0,0.3), 0 0 ${brilho * 4}px rgba(80,255,150,${brilho ? 0.7 : 0})`,
               display: 'flex',
               alignItems: 'center',
               gap: 26,

@@ -149,6 +149,8 @@ export const Egito: React.FC<{camera?: number; noite?: number}> = ({camera = 0, 
       {areia.map((a, i) => (
         <div key={i} style={{position: 'absolute', left: ((f * a.v + i * 97) % 1250) - 80, top: a.y + Math.sin(f / 15 + i) * 12, width: a.r * 2, height: a.r * 2, borderRadius: '50%', background: a.c, opacity: 0.35 + a.o * 0.4}} />
       ))}
+      {/* feixe de luz atravessando (reflexo de lente) */}
+      <div style={{position: 'absolute', left: ((f % 150) / 150) * 2000 - 700, top: -400, width: 260, height: 2800, transform: 'rotate(24deg)', background: 'linear-gradient(90deg, transparent, rgba(255,236,190,0.22), transparent)', mixBlendMode: 'screen'}} />
       <AbsoluteFill style={{background: `rgba(10,4,30,${noite})`}} />
       <AbsoluteFill style={{background: 'linear-gradient(180deg, rgba(60,0,120,0.18), transparent 40%, rgba(255,120,40,0.12))', mixBlendMode: 'screen'}} />
       <AbsoluteFill style={{background: 'radial-gradient(circle at 50% 42%, transparent 52%, rgba(10,0,30,0.6) 100%)'}} />

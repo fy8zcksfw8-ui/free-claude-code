@@ -1,4 +1,7 @@
-import React, {useId} from 'react';
+import React, {createContext, useContext, useId} from 'react';
+
+/** acessorio do Neuro por episodio (ex.: 'explorador' na fase do Egito) */
+export const AcessorioNeuro = createContext<string | null>(null);
 import {useCurrentFrame} from 'remotion';
 
 export type Humor = 'feliz' | 'rindo' | 'surpreso' | 'bravo' | 'triste' | 'tonto';
@@ -19,6 +22,7 @@ export const Neuro: React.FC<{
   aceno?: boolean;
 }> = ({tamanho, boca = 0, humor = 'feliz', bracos = true, aceno = false}) => {
   const f = useCurrentFrame();
+  const acessorio = useContext(AcessorioNeuro);
   const id = useId().replace(/:/g, '');
   const piscar = f % 96 < 4 && humor !== 'rindo';
   const olhar = Math.sin(f / 25) * 6;
@@ -86,6 +90,7 @@ export const Neuro: React.FC<{
                 <>
                   <circle cx={ex + olhar} cy={10} r={humor === 'surpreso' ? 11 : 14} fill={`url(#olho${id})`} />
                   <circle cx={ex + olhar - 4} cy={5} r={4.5} fill="#fff" />
+                  <circle cx={ex + olhar + 5} cy={15} r={2.2} fill="#fff" opacity={0.9} />
                 </>
               )}
               {humor === 'bravo' && <path d={`M ${ex - 30 * Math.sign(ex)} -42 L ${ex + 26 * Math.sign(ex)} -22`} stroke="#3c1428" strokeWidth={10} strokeLinecap="round" />}
@@ -94,8 +99,16 @@ export const Neuro: React.FC<{
           );
         })}
         {/* bochechas */}
-        <ellipse cx={-80} cy={45} rx={16} ry={9} fill="#ffb0cc" opacity={0.8} />
-        <ellipse cx={80} cy={45} rx={16} ry={9} fill="#ffb0cc" opacity={0.8} />
+        <ellipse cx={-80} cy={45} rx={18} ry={10} fill="#ff7fae" opacity={0.75} />
+        <ellipse cx={80} cy={45} rx={18} ry={10} fill="#ff7fae" opacity={0.75} />
+        {acessorio === 'explorador' && (
+          <g transform={`rotate(${Math.sin(f / 14) * 2} 0 -150)`}>
+            <ellipse cx={0} cy={-150} rx={165} ry={34} fill="#c9a36a" stroke="#6b4a1e" strokeWidth={7} />
+            <path d="M -105 -152 Q -100 -255 0 -262 Q 100 -255 105 -152 Z" fill="#e2c28a" stroke="#6b4a1e" strokeWidth={7} />
+            <path d="M -103 -175 Q 0 -160 103 -175 L 104 -152 Q 0 -138 -104 -152 Z" fill="#c62828" />
+            <ellipse cx={-40} cy={-230} rx={30} ry={12} fill="#fff" opacity={0.35} />
+          </g>
+        )}
         {/* boca */}
         {humor === 'rindo' ? (
           <g>

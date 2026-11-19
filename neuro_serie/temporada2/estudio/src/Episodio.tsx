@@ -122,4 +122,9 @@ export const EP_T3E1: Ep = {
   dados: d31, rivalNome: 'ESFINGE', rivalCor: '#7dfcff', Rival: Esfinge, rodadas: 3, semPlacar: true,
   rotuloRival: 'ARMADILHA', rotuloErro: 'VIROU PEDRA!', visuais: VISUAIS_T3, FundoRodada: FundoEgito,
 };
-export const EpisodioT3E1: React.FC = () => <MontaEpisodio ep={EP_T3E1} audio="s3e1/mix.wav" extra={{...EXTRA45, ...EXTRA_T3E1}} trans={TRANS_T3E1} />;
+import {AcessorioNeuro} from './personagens';
+export const EpisodioT3E1: React.FC = () => (
+  <AcessorioNeuro.Provider value="explorador">
+    <MontaEpisodio ep={EP_T3E1} audio="s3e1/mix.wav" extra={{...EXTRA45, ...EXTRA_T3E1}} trans={TRANS_T3E1} />
+  </AcessorioNeuro.Provider>
+);

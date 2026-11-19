@@ -174,7 +174,7 @@ export const RodadaV2: React.FC<{cena: Cena}> = ({cena}) => {
   const ExtraVis = ep.visuais?.[cena.visual];
   const nOp = (cena.opcoes as string[]).length;
   return (
-    <AbsoluteFill style={{transform: `translate(${jitter}px, ${jitter * 0.5}px)`}}>
+    <AbsoluteFill style={{transform: `translate(${jitter}px, ${jitter * 0.5}px) scale(${1 + 0.07 * interpolate(f - Math.round(ev.revelaEm * 30), [0, 3, 16], [0, 1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'})})`}}>
       {ep.FundoRodada ? <ep.FundoRodada n={cena.n} /> : <Fundo c1={tema[0]} c2={tema[1]} c3={tema[2]} />}
       {memoria ? (
         <>
