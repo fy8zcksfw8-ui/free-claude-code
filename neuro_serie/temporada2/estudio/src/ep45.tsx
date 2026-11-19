@@ -7,6 +7,7 @@ import {Contagem, Coracao, Fundo, Hud, Legendas, Opcoes, Pilula, Texto, TITULO, 
 import {Abs, useBoca, useT} from './cenas';
 import type {Cena} from './cenas';
 import {Miragem, Turbo} from './ep23';
+import {Brilhos} from './brilhos';
 import {useEp} from './ctx';
 import type {RivalProps} from './ctx';
 
@@ -216,6 +217,7 @@ export const RodadaV2: React.FC<{cena: Cena}> = ({cena}) => {
       )}
       <Opcoes itens={cena.opcoes} inicio={0.5} certa={cena.certa} robo={cena.robo} roboEm={ev.roboEm} revelaEm={ev.revelaEm} yBase={nOp === 2 ? 935 : 880} passo={112} />
       <Contagem ini={ev.contaIni} fim={ev.contaFim} y={836} x={540} />
+      <Brilhos x={500} y={(nOp === 2 ? 935 : 880) + cena.certa * 112 + 52} k={f - Math.round(ev.revelaEm * 30)} />
       {pontuou && kPonto < 22 && (
         <Abs x={interpolate(kPonto, [0, 20], [540, cena.ponto === 'neuro' ? 470 : 610])} y={interpolate(kPonto, [0, 20], [640, 250], {easing: (x) => 1 - Math.pow(1 - x, 3)})} escala={1.2 - kPonto / 30}>
           <div style={{fontFamily: TITULO, fontSize: 90, color: cena.ponto === 'neuro' ? '#ffd23f' : ep.rivalCor, WebkitTextStroke: '10px #140a24', paintOrder: 'stroke fill'}}>{memoria ? '+30%' : '+1'}</div>

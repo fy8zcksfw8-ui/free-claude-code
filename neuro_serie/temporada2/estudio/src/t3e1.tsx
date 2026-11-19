@@ -73,41 +73,90 @@ export const Grao: React.FC<{forca?: number}> = ({forca = 0.1}) => {
   );
 };
 
-// ================================================================ CENARIO DO EGITO (camadas + camera)
+// ================================================================ CENARIO DO EGITO (camadas + camera + cor)
+const Palmeira: React.FC<{x: number; y: number; s: number; f: number}> = ({x, y, s, f}) => (
+  <g transform={`translate(${x} ${y}) scale(${s})`}>
+    <path d="M 0 0 Q -8 -90 6 -180" stroke="#2a1030" strokeWidth={14} fill="none" strokeLinecap="round" />
+    {[-70, -30, 10, 50, 90].map((a, i) => (
+      <path key={i} d="M 6 -180 q 40 -30 90 10" stroke="#2a1030" strokeWidth={12} fill="none" strokeLinecap="round" transform={`rotate(${a + Math.sin(f / 20 + i) * 4} 6 -180)`} />
+    ))}
+  </g>
+);
 export const Egito: React.FC<{camera?: number; noite?: number}> = ({camera = 0, noite = 0}) => {
   const f = useCurrentFrame();
-  const estrelas = useMemo(() => Array.from({length: 60}).map((_, i) => ({x: random(`ex${i}`) * 1080, y: random(`ey${i}`) * 900, r: 1 + random(`er${i}`) * 3})), []);
-  const p = (f / 30) * 0.02 + camera; // push-in lento
+  const estrelas = useMemo(() => Array.from({length: 70}).map((_, i) => ({x: random(`ex${i}`) * 1080, y: random(`ey${i}`) * 820, r: 1 + random(`er${i}`) * 3, c: ['#ffffff', '#ffe08a', '#9fe8ff', '#ffb3e6'][i % 4]})), []);
+  const areia = useMemo(() => Array.from({length: 45}).map((_, i) => ({y: 900 + random(`ay${i}`) * 900, v: 2 + random(`av${i}`) * 6, r: 2 + random(`ar${i}`) * 4, o: random(`ao${i}`), c: ['#ffd27a', '#ff9a5a', '#fff1c4'][i % 3]})), []);
+  const p = (f / 30) * 0.02 + camera;
   const camada = (k: number) => ({transform: `scale(${1 + p * k}) translateY(${-p * k * 40}px)`, transformOrigin: '50% 60%'});
   return (
-    <AbsoluteFill style={{overflow: 'hidden', background: `linear-gradient(180deg, #120a3a 0%, #3b1d6e 45%, #d9783a 78%, #f2b75c 100%)`}}>
+    <AbsoluteFill style={{overflow: 'hidden', background: 'linear-gradient(180deg, #0b0630 0%, #3a1478 28%, #a02a8c 50%, #ff6a3d 70%, #ffc75a 86%, #ffe7a3 100%)'}}>
+      {/* faixas de luz coloridas (tipo aurora) */}
+      {[['#ff4fd8', 260, 0], ['#3ff3ff', 420, 2], ['#ffd23f', 560, 4]].map(([c, y, k], i) => (
+        <div key={i} style={{position: 'absolute', left: -200 + Math.sin(f / 50 + (k as number)) * 120, top: (y as number) - 120, width: 1500, height: 220, borderRadius: '50%', background: c as string, opacity: 0.16, filter: 'blur(60px)', transform: `rotate(${-8 + i * 6}deg)`}} />
+      ))}
       <AbsoluteFill style={camada(0.3)}>
         {estrelas.map((e, i) => (
-          <div key={i} style={{position: 'absolute', left: e.x, top: e.y, width: e.r * 2, height: e.r * 2, borderRadius: '50%', background: '#fff', opacity: 0.5 + 0.5 * Math.sin(f / 9 + i)}} />
+          <div key={i} style={{position: 'absolute', left: e.x, top: e.y, width: e.r * 2, height: e.r * 2, borderRadius: '50%', background: e.c, opacity: 0.4 + 0.6 * Math.abs(Math.sin(f / 9 + i)), boxShadow: `0 0 ${e.r * 3}px ${e.c}`}} />
         ))}
-        <div style={{position: 'absolute', left: 760, top: 260, width: 150, height: 150, borderRadius: '50%', background: '#fff3c4', boxShadow: '0 0 90px 30px rgba(255,236,170,0.45)'}} />
+        {/* lua com raios girando */}
+        <div style={{position: 'absolute', left: 835 - 260, top: 335 - 260, width: 520, height: 520, borderRadius: '50%', background: 'repeating-conic-gradient(rgba(255,240,190,0.16) 0deg 8deg, transparent 8deg 20deg)', transform: `rotate(${f * 0.4}deg)`, maskImage: 'radial-gradient(circle, #000 30%, transparent 70%)', WebkitMaskImage: 'radial-gradient(circle, #000 30%, transparent 70%)'}} />
+        <div style={{position: 'absolute', left: 760, top: 260, width: 150, height: 150, borderRadius: '50%', background: 'radial-gradient(circle at 40% 35%, #fffdf0, #ffe7a3 60%, #ffc75a)', boxShadow: '0 0 90px 35px rgba(255,220,150,0.5)'}} />
       </AbsoluteFill>
-      <AbsoluteFill style={{...camada(0.6), filter: 'blur(3px)'}}>
+      <AbsoluteFill style={{...camada(0.6), filter: 'blur(2px)'}}>
         <svg width={1080} height={1920}>
-          <polygon points="80,1150 330,820 580,1150" fill="#7a3d2a" />
-          <polygon points="330,820 580,1150 450,1150" fill="#5a2a1c" />
-          <polygon points="620,1150 820,900 1020,1150" fill="#8a4630" />
-          <polygon points="820,900 1020,1150 910,1150" fill="#62301f" />
+          <defs>
+            <linearGradient id="pirL" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#ffb35a" />
+              <stop offset="100%" stopColor="#d9783a" />
+            </linearGradient>
+          </defs>
+          <polygon points="80,1150 330,820 580,1150" fill="url(#pirL)" />
+          <polygon points="330,820 580,1150 450,1150" fill="#8a3d2a" />
+          <polygon points="330,820 358,857 302,857" fill="#fff1a8" />
+          <polygon points="620,1150 820,900 1020,1150" fill="url(#pirL)" />
+          <polygon points="820,900 1020,1150 910,1150" fill="#7a3424" />
+          <polygon points="820,900 842,928 798,928" fill="#fff1a8" />
+          <Palmeira x={60} y={1170} s={1.1} f={f} />
+          <Palmeira x={1010} y={1170} s={0.9} f={f + 20} />
         </svg>
       </AbsoluteFill>
       <AbsoluteFill style={camada(1)}>
         <svg width={1080} height={1920}>
-          <path d="M 0 1180 Q 270 1080 540 1170 Q 810 1260 1080 1140 L 1080 1920 L 0 1920 Z" fill="#c9783c" />
-          <path d="M 0 1330 Q 360 1220 720 1330 Q 900 1380 1080 1300 L 1080 1920 L 0 1920 Z" fill="#a85a2a" />
+          <defs>
+            <linearGradient id="nilo" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#3ff3ff" stopOpacity={0.2} />
+              <stop offset="50%" stopColor="#7df9ff" stopOpacity={0.9} />
+              <stop offset="100%" stopColor="#3ff3ff" stopOpacity={0.2} />
+            </linearGradient>
+            <linearGradient id="duna1" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#f2a24f" />
+              <stop offset="100%" stopColor="#b8582a" />
+            </linearGradient>
+            <linearGradient id="duna2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#d9783a" />
+              <stop offset="100%" stopColor="#7a2e1a" />
+            </linearGradient>
+          </defs>
+          <path d="M 0 1180 Q 270 1080 540 1170 Q 810 1260 1080 1140 L 1080 1920 L 0 1920 Z" fill="url(#duna1)" />
+          <path d="M -20 1250 Q 540 1205 1100 1250 L 1100 1272 Q 540 1228 -20 1272 Z" fill="url(#nilo)" />
+          {[0, 1, 2, 3, 4].map((i) => (
+            <line key={i} x1={((f * 3 + i * 230) % 1300) - 100} y1={1250 + (i % 2) * 8} x2={((f * 3 + i * 230) % 1300) - 40} y2={1250 + (i % 2) * 8} stroke="#fff" strokeWidth={3} opacity={0.7} />
+          ))}
+          <path d="M 0 1330 Q 360 1220 720 1330 Q 900 1380 1080 1300 L 1080 1920 L 0 1920 Z" fill="url(#duna2)" />
+          <path d="M 0 1330 Q 360 1220 720 1330 Q 900 1380 1080 1300" stroke="#ffd27a" strokeWidth={5} fill="none" opacity={0.7} />
         </svg>
       </AbsoluteFill>
+      {areia.map((a, i) => (
+        <div key={i} style={{position: 'absolute', left: ((f * a.v + i * 97) % 1250) - 80, top: a.y + Math.sin(f / 15 + i) * 12, width: a.r * 2, height: a.r * 2, borderRadius: '50%', background: a.c, opacity: 0.35 + a.o * 0.4}} />
+      ))}
       <AbsoluteFill style={{background: `rgba(10,4,30,${noite})`}} />
-      <AbsoluteFill style={{background: 'radial-gradient(circle at 50% 42%, transparent 50%, rgba(0,0,0,0.55) 100%)'}} />
+      <AbsoluteFill style={{background: 'linear-gradient(180deg, rgba(60,0,120,0.18), transparent 40%, rgba(255,120,40,0.12))', mixBlendMode: 'screen'}} />
+      <AbsoluteFill style={{background: 'radial-gradient(circle at 50% 42%, transparent 52%, rgba(10,0,30,0.6) 100%)'}} />
     </AbsoluteFill>
   );
 };
 
-// ================================================================ A ESFINGE
+// ================================================================ A ESFINGE (mais detalhes e cor)
 export const Esfinge: React.FC<RivalProps & {brilho?: number}> = ({tamanho, boca = 0, modo = 'normal', silhueta = false, brilho = 0}) => {
   const f = useCurrentFrame();
   const id = useId().replace(/:/g, '');
@@ -115,14 +164,22 @@ export const Esfinge: React.FC<RivalProps & {brilho?: number}> = ({tamanho, boca
   const S = (c: string) => (silhueta ? '#0c0718' : pedra ? '#8d8a86' : c);
   const olho = pedra ? '#555' : modo === 'convencido' || brilho > 0 ? '#7dfcff' : '#ffd23f';
   const tremor = pedra ? Math.sin(f * 2.4) * 4 : 0;
+  const pulso = 0.5 + 0.5 * Math.sin(f / 6);
+  const gemas = ['#ff3d6e', '#3ff3ff', '#5dff9b', '#ffd23f', '#b46bff'];
   return (
     <svg width={tamanho} height={tamanho} viewBox="-250 -250 500 500" style={{overflow: 'visible'}}>
       <defs>
         <linearGradient id={`ouro${id}`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#ffe08a" />
-          <stop offset="100%" stopColor="#c98a1a" />
+          <stop offset="0%" stopColor="#fff1b0" />
+          <stop offset="45%" stopColor="#ffc93c" />
+          <stop offset="100%" stopColor="#b7700e" />
         </linearGradient>
-        <filter id={`luz${id}`} x="-60%" y="-60%" width="220%" height="220%">
+        <linearGradient id={`azul${id}`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#1a3aa8" />
+          <stop offset="50%" stopColor="#3f74ff" />
+          <stop offset="100%" stopColor="#1a3aa8" />
+        </linearGradient>
+        <filter id={`luz${id}`} x="-80%" y="-80%" width="260%" height="260%">
           <feGaussianBlur stdDeviation={6 + brilho * 10} result="b" />
           <feMerge>
             <feMergeNode in="b" />
@@ -131,27 +188,56 @@ export const Esfinge: React.FC<RivalProps & {brilho?: number}> = ({tamanho, boca
         </filter>
       </defs>
       <g transform={`translate(${tremor} 0)`}>
-        {/* nemes (toucado listrado) */}
-        <path d="M -175 -60 Q -150 -215 0 -228 Q 150 -215 175 -60 L 215 175 L 95 120 L 70 -10 L -70 -10 L -95 120 L -215 175 Z" fill={S('#2d5bd6')} stroke={S('#14286b')} strokeWidth={7} />
+        {/* auréola */}
+        {!silhueta && !pedra && <circle r={235} fill="none" stroke="#ffd23f" strokeWidth={4} opacity={0.25 + pulso * 0.25} strokeDasharray="6 14" transform={`rotate(${f})`} />}
+        {/* nemes */}
+        <path d="M -175 -60 Q -150 -215 0 -228 Q 150 -215 175 -60 L 215 175 L 95 120 L 70 -10 L -70 -10 L -95 120 L -215 175 Z" fill={silhueta ? '#0c0718' : pedra ? '#8d8a86' : `url(#azul${id})`} stroke={S('#0e1f5c')} strokeWidth={7} />
+        {!silhueta && !pedra && [-150, -110, -70, 70, 110, 150].map((x, i) => <path key={i} d={`M ${x} -120 L ${x * 1.25} 160`} stroke="url(#ouro0)" strokeWidth={14} opacity={0.95} style={{stroke: '#ffcf4a'}} />)}
+        {/* colar usekh com pedras */}
+        {!silhueta &&
+          [0, 1, 2].map((k) => (
+            <path key={k} d={`M ${-120 + k * 12} ${130 + k * 22} Q 0 ${215 + k * 26} ${120 - k * 12} ${130 + k * 22}`} stroke={pedra ? '#777' : ['#ffcf4a', '#3ff3ff', '#ff3d6e'][k]} strokeWidth={16} fill="none" strokeLinecap="round" />
+          ))}
         {!silhueta &&
           !pedra &&
-          [-150, -110, -70, 70, 110, 150].map((x, i) => <path key={i} d={`M ${x} -120 L ${x * 1.25} 160`} stroke="#ffd23f" strokeWidth={14} opacity={0.9} />)}
+          Array.from({length: 9}).map((_, i) => {
+            const a = Math.PI * (0.15 + i * 0.0875);
+            return <circle key={i} cx={Math.cos(a) * -125} cy={150 + Math.sin(a) * 75} r={9} fill={gemas[i % 5]} stroke="#fff" strokeWidth={2.5} />;
+          })}
+        {/* orelhas e brincos */}
+        {!silhueta &&
+          [-1, 1].map((sg) => (
+            <g key={sg}>
+              <ellipse cx={sg * 102} cy={-40} rx={14} ry={30} fill={pedra ? '#999' : '#e8a93a'} />
+              {!pedra && <circle cx={sg * 104} cy={-2 + Math.sin(f / 8 + sg) * 3} r={10} fill="#3ff3ff" stroke="#ffd23f" strokeWidth={4} />}
+            </g>
+          ))}
         {/* rosto */}
         <path d="M -95 -150 Q 0 -190 95 -150 L 100 40 Q 0 140 -100 40 Z" fill={silhueta ? '#0c0718' : pedra ? '#a29e98' : `url(#ouro${id})`} stroke={S('#7a4e0e')} strokeWidth={6} />
+        {!silhueta && !pedra && <ellipse cx={-45} cy={-110} rx={30} ry={14} fill="#fff" opacity={0.35} />}
         <path d="M -95 -150 Q 0 -190 95 -150 L 95 -118 Q 0 -150 -95 -118 Z" fill={S('#ffd23f')} />
-        {/* olhos com delineado */}
+        {!silhueta && !pedra && [-60, -20, 20, 60].map((x, i) => <circle key={i} cx={x} cy={-140} r={6} fill={gemas[i]} />)}
+        {/* uraeus (cobra na testa) */}
+        {!silhueta && (
+          <g transform={`translate(0 -168) rotate(${Math.sin(f / 10) * 4})`}>
+            <path d="M 0 30 Q -16 10 0 -10 Q 16 -30 0 -48" stroke={pedra ? '#777' : '#ffcf4a'} strokeWidth={12} fill="none" strokeLinecap="round" />
+            <ellipse cx={0} cy={-52} rx={14} ry={11} fill={pedra ? '#777' : '#ffcf4a'} />
+            {!pedra && <circle cx={0} cy={-52} r={4} fill="#ff3d6e" />}
+          </g>
+        )}
+        {/* olhos */}
         {[-45, 45].map((x) => (
           <g key={x}>
             {!silhueta && <path d={`M ${x - 34} -45 Q ${x} -72 ${x + 34} -45 Q ${x} -30 ${x - 34} -45 L ${x + (x < 0 ? -50 : 50)} -40`} fill={pedra ? '#888' : '#fff'} stroke="#1b1033" strokeWidth={6} />}
+            {!pedra && !silhueta && <ellipse cx={x} cy={-48} rx={24 + pulso * 6} ry={20 + pulso * 4} fill={olho} opacity={0.25} filter={`url(#luz${id})`} />}
             <ellipse cx={x} cy={-48} rx={13} ry={12 - (f % 110 < 4 && !pedra ? 10 : 0)} fill={olho} filter={`url(#luz${id})`} />
+            {!pedra && <circle cx={x - 4} cy={-52} r={3.5} fill="#fff" />}
           </g>
         ))}
-        {/* nariz e boca */}
         {!silhueta && <path d="M 0 -40 L -14 15 L 14 15 Z" fill="rgba(0,0,0,0.15)" />}
-        <ellipse cx={0} cy={58} rx={30} ry={5 + boca * 22} fill={silhueta ? '#7dfcff' : pedra ? '#555' : '#5a1020'} stroke={S('#3a0a14')} strokeWidth={5} />
-        {/* barba farao */}
-        <rect x={-14} y={100} width={28} height={60} rx={8} fill={S('#2d5bd6')} stroke={S('#14286b')} strokeWidth={5} />
-        {/* rachaduras quando vira pedra */}
+        <ellipse cx={0} cy={58} rx={30} ry={5 + boca * 22} fill={silhueta ? '#7dfcff' : pedra ? '#555' : '#7a1030'} stroke={S('#3a0a14')} strokeWidth={5} />
+        <rect x={-14} y={100} width={28} height={60} rx={8} fill={silhueta ? '#0c0718' : pedra ? '#8d8a86' : `url(#azul${id})`} stroke={S('#0e1f5c')} strokeWidth={5} />
+        {!silhueta && !pedra && [112, 130, 148].map((y) => <line key={y} x1={-14} y1={y} x2={14} y2={y} stroke="#ffcf4a" strokeWidth={4} />)}
         {pedra && (
           <g stroke="#3a3530" strokeWidth={6} fill="none" strokeLinecap="round">
             <path d="M -60 -170 L -30 -100 L -55 -40 L -20 30" />
@@ -163,6 +249,8 @@ export const Esfinge: React.FC<RivalProps & {brilho?: number}> = ({tamanho, boca
     </svg>
   );
 };
+
+export {Brilhos} from './brilhos';
 
 // ================================================================ ICONES DO ENIGMA 3
 const Camelo: React.FC<{s?: number}> = ({s = 1}) => (
@@ -359,7 +447,7 @@ export const IntroMundo: React.FC<{cena: Cena}> = ({cena}) => {
   const fl: number[] = cena.eventos.falas;
   const zoom = interpolate(t, [fl[1], fl[1] + 0.9], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: (x) => x * x * (3 - 2 * x)});
   return (
-    <AbsoluteFill style={{background: 'radial-gradient(circle at 50% 35%, #2a3f9e, #070b22 75%)'}}>
+    <AbsoluteFill style={{background: 'radial-gradient(circle at 50% 30%, #8a5bff 0%, #3a1488 42%, #c2338c 75%, #ff8a3d 100%)'}}>
       <Pilula y={235} cor="#ff3d8b" tamanho={46} escala={spring({frame: f - 2, fps: 30, config: {damping: 12}})}>
         DESAFIOS DO NEURO
       </Pilula>

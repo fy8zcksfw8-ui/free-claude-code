@@ -322,7 +322,7 @@ export const Opcoes: React.FC<{
                 width: 72,
                 height: 72,
                 borderRadius: 36,
-                background: revelado && !ehCerta ? '#6d4a5a' : '#ffd23f',
+                background: revelado && !ehCerta ? '#6d4a5a' : ['#ff6fa8', '#3ff3ff', '#ffd23f'][i % 3],
                 color: '#140a24',
                 display: 'flex',
                 alignItems: 'center',
