@@ -149,6 +149,9 @@ export const Hud: React.FC<{placar: [number, number]; rodada: number; pulsoPlaca
           </div>
         ))}
       </div>
+      {ep.semPlacar ? (
+        <Pilula y={250} cor="rgba(10,6,30,0.8)" tamanho={40}>{`ENIGMA ${rodada}/${ep.rodadas}`}</Pilula>
+      ) : (
       <div
         style={{
           position: 'absolute',
@@ -173,6 +176,7 @@ export const Hud: React.FC<{placar: [number, number]; rodada: number; pulsoPlaca
         <span style={{color: ep.rivalCor, fontSize: 58}}>{placar[1]}</span>
         <span style={{color: ep.rivalCor}}>{ep.rivalNome}</span>
       </div>
+      )}
       <div style={{position: 'absolute', left: 540, top: 318, transform: 'translate(-50%,-50%)', display: 'flex', gap: 10}}>
         {Array.from({length: ep.rodadas}, (_, k) => k + 1).map((i) => (
           <div
@@ -373,7 +377,7 @@ const EtiquetaRobo: React.FC<{errou: boolean; desde: number}> = ({errou, desde})
       <div style={{width: 46, height: 46, overflow: 'visible', marginTop: -4}}>
         <Rival tamanho={46} modo={errou ? 'erro' : 'normal'} />
       </div>
-      {errou ? `${ep.rivalNome} ERROU!` : ep.rivalNome}
+      {errou ? ep.rotuloErro ?? `${ep.rivalNome} ERROU!` : ep.rotuloRival ?? ep.rivalNome}
     </div>
   );
 };

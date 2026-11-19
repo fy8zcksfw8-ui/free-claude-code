@@ -40,7 +40,7 @@ def tts(texto, voz, estilo, fx=None):
     seg = FX[fx](a[int(s0 * SR):int(s1 * SR)])
     return seg, [(w, o - s0, o - s0 + du) for w, o, du in wb]
 
-def montar(nome, CENAS, VOZ, contagem=2.5, transicao=14, bpm=118, tom=0, gap=0.14):
+def montar(nome, CENAS, VOZ, contagem=2.5, transicao=14, bpm=118, tom=0, gap=0.14, batida=False):
     """VOZ: {quem: (voz_edge, efeito)}. Gera public/<nome>/mix.wav e src/data/<nome>.json"""
     clips, sfx = [], []
     timeline = {"fps": FPS, "transicao": transicao, "cenas": []}
@@ -74,6 +74,8 @@ def montar(nome, CENAS, VOZ, contagem=2.5, transicao=14, bpm=118, tom=0, gap=0.1
             ev["falas"] = [round(x["ini"], 3) for x in cl]
             dur = t + c.get("cauda", 0.3)
         dfr = int(round(dur * FPS))
+        if batida:  # corta na batida: cada cena termina num multiplo exato do compasso de 1 tempo
+            bf = FPS * 60 / bpm; dfr = int(round(np.ceil(dfr / bf) * bf))
         cena = {k: v for k, v in c.items() if k not in ("falas", "pergunta", "roboFala", "revela", "depois")}
         cena.update(inicio=inicio, duracao=dfr, eventos={k: (round(v, 3) if isinstance(v, float) else v) for k, v in ev.items()})
         cena["clipes"] = [{k: v for k, v in x.items() if k != "_a"} for x in cl]

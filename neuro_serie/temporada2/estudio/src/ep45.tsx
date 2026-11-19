@@ -170,10 +170,11 @@ export const RodadaV2: React.FC<{cena: Cena}> = ({cena}) => {
   const balao = spring({frame: f - Math.round(ev.roboEm * 30), fps: 30, config: {damping: 10}});
   const jitter = bug ? (random(`j${f}`) - 0.5) * 24 : 0;
   const Desafiante = cena.quemDesafia ? AVATAR[cena.quemDesafia] : null;
+  const ExtraVis = ep.visuais?.[cena.visual];
   const nOp = (cena.opcoes as string[]).length;
   return (
     <AbsoluteFill style={{transform: `translate(${jitter}px, ${jitter * 0.5}px)`}}>
-      <Fundo c1={tema[0]} c2={tema[1]} c3={tema[2]} />
+      {ep.FundoRodada ? <ep.FundoRodada n={cena.n} /> : <Fundo c1={tema[0]} c2={tema[1]} c3={tema[2]} />}
       {memoria ? (
         <>
           <Hud placar={pontuou ? depois : antes} rodada={cena.n} pulsoPlacar={0} />
@@ -190,6 +191,7 @@ export const RodadaV2: React.FC<{cena: Cena}> = ({cena}) => {
         <TituloV2 key={i} y={452 + i * 56} texto={l} tamanho={48} cor="#ffd23f" ini={0.45 + i * 0.2} />
       ))}
       <Visual45 cena={cena} />
+      {ExtraVis && <ExtraVis cena={cena} />}
       {Desafiante && t < ev.roboEm && (
         <Abs x={140} y={600} escala={spring({frame: f - 4, fps: 30, config: {damping: 10}})}>
           <Desafiante tamanho={200} boca={bD} modo="normal" />

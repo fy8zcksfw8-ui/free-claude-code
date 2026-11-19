@@ -3,7 +3,8 @@ import {Composition, continueRender, delayRender} from 'remotion';
 import '@fontsource/lilita-one';
 import '@fontsource/nunito/800.css';
 import '@fontsource/nunito/900.css';
-import {ComZonas, Episodio, Episodio2, Episodio3, Episodio4, Episodio5} from './Episodio';
+import {ComZonas, Episodio, Episodio2, Episodio3, Episodio4, Episodio5, EpisodioT3E1} from './Episodio';
+import d31 from './data/s3e1.json';
 import d4 from './data/s2e4.json';
 import d5 from './data/s2e5.json';
 import d2 from './data/s2e2.json';
@@ -24,6 +25,7 @@ export const RemotionRoot: React.FC = () => (
     <Composition id="S2E3" component={Episodio3} durationInFrames={d3.total} fps={30} width={1080} height={1920} />
     <Composition id="S2E4" component={Episodio4} durationInFrames={d4.total} fps={30} width={1080} height={1920} />
     <Composition id="S2E5" component={Episodio5} durationInFrames={d5.total} fps={30} width={1080} height={1920} />
+    <Composition id="S3E1" component={EpisodioT3E1} durationInFrames={d31.total} fps={30} width={1080} height={1920} />
     <Composition id="S2E1-zonas" component={ComZonas} durationInFrames={dados.total} fps={30} width={1080} height={1920} />
   </>
 );

@@ -107,3 +107,19 @@ export const EP4: Ep = {dados: d4, rivalNome: 'DOUTOR', rivalCor: '#c45cff', Riv
 export const EP5: Ep = {dados: d5, rivalNome: 'DOUTOR', rivalCor: '#c45cff', Rival: Doutor, rodadas: 4, visuais: VIS23};
 export const Episodio4: React.FC = () => <MontaEpisodio ep={EP4} audio="s2e4/mix.wav" extra={EXTRA45} trans={TRANS45} />;
 export const Episodio5: React.FC = () => <MontaEpisodio ep={EP5} audio="s2e5/mix.wav" extra={EXTRA45} trans={TRANS45} />;
+
+// ------------------------------------------------------------------ Temporada 3, episodio 1
+import d31 from './data/s3e1.json';
+import {EXTRA_T3E1, Egito, Esfinge, Grao, TRANS_T3E1, VISUAIS_T3} from './t3e1';
+
+const FundoEgito: React.FC<{n: number}> = ({n}) => (
+  <>
+    <Egito noite={0.35 + n * 0.1} />
+    <Grao />
+  </>
+);
+export const EP_T3E1: Ep = {
+  dados: d31, rivalNome: 'ESFINGE', rivalCor: '#7dfcff', Rival: Esfinge, rodadas: 3, semPlacar: true,
+  rotuloRival: 'ARMADILHA', rotuloErro: 'VIROU PEDRA!', visuais: VISUAIS_T3, FundoRodada: FundoEgito,
+};
+export const EpisodioT3E1: React.FC = () => <MontaEpisodio ep={EP_T3E1} audio="s3e1/mix.wav" extra={{...EXTRA45, ...EXTRA_T3E1}} trans={TRANS_T3E1} />;

@@ -1,0 +1,189 @@
+{
+ "version": "1.0",
+ "meta": {
+  "title": "A Esfinge",
+  "language": "pt-BR"
+ },
+ "source": {
+  "kind": "topic",
+  "ref": "Desafios do Neuro T3E1: a Esfinge do Egito com 3 enigmas",
+  "media": null
+ },
+ "intent": {
+  "goal": "viral",
+  "best_action_rationale": "Preset viral (9:16, cortes curtos, karaokê) para TikTok. Gancho escolhido: contraste/choque, porque o visual (olhos acendendo + ameaça) para o scroll mesmo sem som e já planta o loop do 3º enigma.",
+  "angle": "Um desafio de enigmas com consequência visual (errou = vira pedra) e um loop aberto no 1º segundo que só fecha no 3º enigma.",
+  "pain": "Desejo de provar que é inteligente e de vencer algo que 'quase ninguém' vence (sinalização de identidade).",
+  "emotion": "fun",
+  "framework": "Hook–Value–CTA + loop narrativo (Viral5)",
+  "hook_variants": [
+   "Curiosidade: 'Quase ninguém passa do 3º enigma da Esfinge…'",
+   "Contraste/choque: 'Responda… ou vire PEDRA.' (olhos da Esfinge acendendo)",
+   "Benefício: 'Descubra em 60 segundos se você pensa como um gênio.'"
+  ]
+ },
+ "style": {
+  "preset": "viral",
+  "pacing": {
+   "avg_cut_seconds": 1.1,
+   "energy": 0.95
+  },
+  "transitions": [
+   "zoom",
+   "whip",
+   "cut"
+  ],
+  "music": {
+   "energy": 0.95
+  },
+  "captions": {
+   "enabled": true,
+   "style": "karaoke",
+   "position": null
+  },
+  "color": {
+   "look": "punchy"
+  }
+ },
+ "output": {
+  "aspect": "9:16",
+  "duration_target_seconds": 65,
+  "platform": "tiktok"
+ },
+ "timeline": [
+  {
+   "id": "gancho",
+   "role": "hook",
+   "content": {
+    "headline": "RESPONDA… OU VIRE PEDRA",
+    "narration": "Esfinge: Responda… ou vire pedra! / Neuro: Ninguém passa do terceiro?"
+   },
+   "camera": "punch-zoom nos olhos",
+   "archetype": "close extremo de personagem",
+   "motion": [
+    "pop",
+    "glitch-rgb",
+    "shake"
+   ],
+   "transition_out": "zoom",
+   "render_kind": "motion"
+  },
+  {
+   "id": "intro",
+   "role": "intro",
+   "content": {
+    "headline": "TORNEIO MUNDIAL • FASE 1: EGITO",
+    "narration": "Neuro: Oi! Eu sou o Neuro! Torneio Mundial, fase um: Egito!"
+   },
+   "camera": "dolly-in pelo globo até o Egito",
+   "archetype": "globo + mapa",
+   "motion": [
+    "push-in",
+    "parallax"
+   ],
+   "transition_out": "whip",
+   "render_kind": "motion"
+  },
+  {
+   "id": "esfinge",
+   "role": "point",
+   "content": {
+    "headline": "3 ENIGMAS. ERROU = PEDRA",
+    "narration": "Esfinge: Eu sou a Esfinge. Três enigmas. Errou… virou pedra."
+   },
+   "camera": "contra-plongée lenta, parallax de dunas",
+   "archetype": "revelação de personagem gigante",
+   "motion": [
+    "parallax",
+    "mask-reveal"
+   ],
+   "transition_out": "zoom",
+   "render_kind": "motion"
+  },
+  {
+   "id": "enigma1",
+   "role": "point",
+   "content": {
+    "headline": "4 PERNAS DE MANHÃ, 2 À TARDE, 3 À NOITE?",
+    "narration": "Esfinge pergunta; armadilha: 'muitos respondem gato'; resposta: o ser humano (bebê engatinha, adulto anda, idoso de bengala)"
+   },
+   "camera": "câmera fixa + punch-in na resposta",
+   "archetype": "quiz com 3 cartões",
+   "motion": [
+    "char-stagger",
+    "pop",
+    "count-down ring"
+   ],
+   "transition_out": "whip",
+   "render_kind": "motion"
+  },
+  {
+   "id": "enigma2",
+   "role": "point",
+   "content": {
+    "headline": "QUANTO MAIS CRESCE, MENOS SE VÊ?",
+    "narration": "Armadilha: 'a sombra'; resposta: a escuridão (tela escurece)"
+   },
+   "camera": "push-in lento",
+   "archetype": "quiz + escurecimento",
+   "motion": [
+    "mask-reveal",
+    "pop"
+   ],
+   "transition_out": "zoom",
+   "render_kind": "motion"
+  },
+  {
+   "id": "enigma3",
+   "role": "point",
+   "content": {
+    "headline": "🐪🔺☀ — QUANTO DÁ?",
+    "narration": "Equação de ícones: camelo 5, pirâmide 3, sol 2; ☀+🐪×🔺 = 17 (armadilha: 21). Fecha o loop do gancho."
+   },
+   "camera": "punch-zoom em cada linha",
+   "archetype": "equação de emojis",
+   "motion": [
+    "pop",
+    "count-up",
+    "whip-pan"
+   ],
+   "transition_out": "cut",
+   "render_kind": "motion"
+  },
+  {
+   "id": "cta",
+   "role": "cta",
+   "content": {
+    "headline": "QUANTOS VOCÊ ACERTOU?",
+    "narration": "Esfinge vira pedra e racha; Neuro: Comenta quantos você acertou!"
+   },
+   "camera": "shake + explosão de poeira",
+   "archetype": "resultado / vidas",
+   "motion": [
+    "pop",
+    "shake"
+   ],
+   "transition_out": "zoom",
+   "render_kind": "motion"
+  },
+  {
+   "id": "continua",
+   "role": "broll",
+   "content": {
+    "headline": "CONTINUA… FASE 2",
+    "narration": "A porta da pirâmide abre; voz: Bem-vindo ao labirinto…"
+   },
+   "camera": "dolly-in pela porta (zoom-through)",
+   "archetype": "gancho de série",
+   "motion": [
+    "push-in",
+    "iris"
+   ],
+   "transition_out": "cut",
+   "render_kind": "motion"
+  }
+ ],
+ "render": {
+  "engine_hint": "auto"
+ }
+}

@@ -9,6 +9,10 @@ export type Ep = {
   rivalCor: string;
   Rival: React.FC<RivalProps>;
   rodadas: number;
+  semPlacar?: boolean; // mostra 'ENIGMA n/N' no lugar do placar
+  rotuloRival?: string; // etiqueta na alternativa que o rival sugeriu
+  rotuloErro?: string;
+  FundoRodada?: React.FC<{n: number}>; // cenario proprio nas rodadas
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   visuais?: Record<string, React.FC<any>>;
 };
